@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.kh.jdbc.day01.student.model.vo.Student;
+import com.kh.jdbc.day02.student.model.vo.Student;
 
 public class StudentDAO {
 	// DAO에 역할은 DB에 데이터를 가지고 와서 객체화 시켜놓는것이 목적이다.

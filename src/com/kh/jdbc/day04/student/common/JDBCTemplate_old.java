@@ -1,19 +1,12 @@
 package com.kh.jdbc.day04.student.common;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
 import java.sql.*;
-import java.util.Properties;
 
-public class JDBCTemplate {
-	
-	// properties
-	// 키와 값을 String 타입으로 제한한 Map 컬렉션이다.
-	private Properties prop;
-	
-	
+public class JDBCTemplate_old {
+	private final String DRIVER_NAME = "oracle.jdbc.driver.OracleDriver";
+	private final String URL = "jdbc:oracle:thin:@localhost:1521:xe";
+	private final String USER = "student"; // 아이디와 비밀번호는 대소문자를 구분하기 때문에
+	private final String PASSWORD = "student"; // DB에 설정된 아이디,비밀번호에 맞춰서 써준다.
 	// 디자인 패턴 : 각기 다른 소프트웨어 모듈이나 기능을 가진 응용 SW를 
 	// 개발할 때 공통되는 설계 문제를 해결하기 위하여 사용되는 패턴임.
 	// ==> 효율적인 방식을 위함
@@ -39,10 +32,10 @@ public class JDBCTemplate {
 	 */
 	// 무조건 딱 한번만 생성되고 없을 때에만 생성한다.
 	// 이미 존재하면 존재하는 객체를 사용함.
-	private static JDBCTemplate instance;
+	private static JDBCTemplate_old instance;
 	private static Connection conn;
 	
-	private JDBCTemplate() {}
+	private JDBCTemplate_old() {}
 	
 //	public void exmethod() {
 //		// 이미 만들어져 있는지 체크하고
@@ -53,11 +46,11 @@ public class JDBCTemplate {
 //		// 만들어져 있으면 사용
 //		JDBC객체
 //	}
-	public static JDBCTemplate getInstance() { // 싱글톤 패턴
+	public static JDBCTemplate_old getInstance() { // 싱글톤 패턴
 		// 이미 만들어져 있는지 체크하고
 		if(instance == null) {
 			// 안만들어져 있으면 만들어서 사용
-			instance = new JDBCTemplate();
+			instance = new JDBCTemplate_old();
 		}
 		// 만들어져 있으면 사용
 		return instance;
@@ -66,44 +59,16 @@ public class JDBCTemplate {
 	// DBCP(DataBase Connection Pool) 
 	public Connection createConnection() { // 리턴값을 받기 위해 선언했던 변수 왼쪽편에 커넥션을 써준다.
 		try {
-			prop = new Properties();
-			Reader reader = new FileReader("resources/dev.properties");
-			prop.load(reader);
-			String driverName = prop.getProperty("driverName");
-			String url = prop.getProperty("url");
-			String user = prop.getProperty("user");
-			String password = prop.getProperty("password");
 			if(conn == null || conn.isClosed()) {
-				Class.forName(driverName);
-				conn = DriverManager.getConnection(url, user, password);
-				conn.setAutoCommit(false); // 오토 커밋 풀기
+				Class.forName(DRIVER_NAME);
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return conn;
-	}
-	
-	public static void commit(Connection conn) { // 커밋
-		try {
-			if(conn != null && !conn.isClosed()) conn.commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static void rollback(Connection conn) { // 롤백
-		try {
-			if(conn != null && !conn.isClosed()) conn.rollback();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public void close() {

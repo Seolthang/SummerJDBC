@@ -41,6 +41,13 @@ public class StudentService {
 	public int insertStudent(Student student) {
 		Connection conn = jdbcTemplate.createConnection();
 		int result = sDao.insertStudent(conn, student);
+		result += sDao.updateStudent(conn, student);
+		
+		if(result > 1) {
+			JDBCTemplate.commit(conn);
+		}else {
+			JDBCTemplate.rollback(conn);
+		}
 		jdbcTemplate.close();
 		return result;
 	}
